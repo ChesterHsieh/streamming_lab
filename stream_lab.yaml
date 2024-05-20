@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kafka-flink
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: kafka-flink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+      - name: kafka
+        image: wurstmeister/kafka
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: kafka-flink
+spec:
+  selector:
+   app: kafka
+  ports:
+   - port: 9092
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink
+  namespace: kafka-flink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink
+  template:
+    metadata:
+      labels:
+        app: flink
+    spec:
+      containers:
+      - name: flink
+        image: apache/flink:1.15.2-scala_2.12
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flink
+  namespace: kafka-flink
+spec:
+  selector:
+   app: flink
+  ports:
+   - port: 8081

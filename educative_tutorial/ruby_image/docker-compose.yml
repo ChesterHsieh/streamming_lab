@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  hellok8s:
+    image: chesterhsieh/hellok8s:v2
+    ports:
+      - "4567:4567"
