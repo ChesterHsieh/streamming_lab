@@ -19,6 +19,8 @@ services:
 
   flink-jobmanager:
     image: flink:latest
+    depends_on:
+      - mysql
     environment:
       - JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
     ports:
@@ -35,13 +37,22 @@ services:
       - "8082:8082"
     command: taskmanager
 
-  sqlite:
-    image: nouchka/sqlite3
+  mysql:
+    image: arm64v8/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - "3306:3306"
     volumes:
       - ./data:/data
 
   fake-data-generator:
     image: chesterhsieh/streamming_lab
+    depends_on:
+      - kafka
     volumes:
       - ./fake_data_generator:/app
     command: python /app/generate_data.py
